@@ -6,22 +6,27 @@ import ReactPaginate from "react-paginate"
 import { useRouter } from "next/router"
 import Loading from './Loading';
 import Style from '../styles/Home.module.css';
-import Aboutmovie from '../pages/aboutmovie/[id]';
+import {config} from '../pages/api/config';
+import {get} from 'lodash';
 export default function Allmovies({data,loading}) {
-
-  const [users, setUsers] = useState([])
+let movieDetails=data.results
+  console.log('data',data)
+  const [movies, setmovies] = useState([])
   const router = useRouter()
 
+
+  
+
   useEffect(() => {
-    if (data) {
-      if (data.error) {
+    if (movieDetails) {
+      if (movieDetails.error) {
         // Handle error
       } else {
-        // Set users from data
-        setUsers(data)
+        // Set movies from data
+        setmovies(movieDetails)
       }
     }
-  }, [data])
+  }, [movieDetails])
 
   const handlePagination = page => {
     const path = router.pathname
@@ -33,7 +38,7 @@ export default function Allmovies({data,loading}) {
     })
   }
 
-  console.log(users);
+
 
   return (
    
@@ -45,26 +50,31 @@ export default function Allmovies({data,loading}) {
         </Head>
 
         <div >
-        {loading && users ? <div>
+        {loading && movies ? <div>
           <div  className={Style.movies}>
-            
-        { users.map((items)=>{
+        
+        { movieDetails.map((items)=>{
+
           return (
-            
+        
             <div className={Style.card} key={items.id}>
               <div className={Style.grid}>
-               <div className={Style.img}> <img src={items.files.poster_url} alt={''} width="100%" height="100%" /></div>
+               <div className={Style.img}> 
+               <img src={`${config.API_IMAGE.small}/${items.poster_path}`}  width="100px" height="100px"  alt="img" />
+       
+               </div>
              
               <div className={Style.movieQuality}>
-              <p className={Style.new}>{items.params.is_new ? 'NEW':''}</p>
-              <p className={Style.hd}>{items.params.is_hd ? 'FULLHD':''}</p>
+              <p className={Style.new}>{items.vote_average  }</p>
+              <p className={Style.hd}>{items.original_language }</p>
               </div>
+              <p>{items.original_title}</p>
           <button className={Style.button} type="button" onClick={() => router.push(`/aboutmovie/${items.id}`)}>
       Click me
     </button>
               </div>
               </div>
-          )
+       )
         }) }
         </div>
 
@@ -75,8 +85,8 @@ export default function Allmovies({data,loading}) {
         previousLabel={"previous"}
         nextLabel={"next"}
         breakLabel={"..."}
-        initialPage={data.curPage - 1}
-        pageCount={data.maxPage}
+        initialPage={1}
+        pageCount={20}
         onPageChange={handlePagination}
       /></div>
      

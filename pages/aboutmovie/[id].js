@@ -2,23 +2,22 @@ import axios from 'axios'
 import Link from 'next/link'
 import React from "react"
 
-import {config,headers} from '../api/hello' ;
+import {config,headers} from '../api/config' ;
 import MovieDetails from '../../components/MovieDetails';
 import Img from '../../components/Img';
 import Actors from '../../components/Actors';
 import Style from '../../styles/Home.module.css';
-
+import { useRouter } from "next/router"
 
 export default function Aboutmovie({data}) {
-
-
-
-
-
+  console.log('newss',newss)
    const snapshots=data.files.snapshots
    const actors=data.actors
 
-
+   const { query } = useRouter()
+   const { users } = query
+ 
+   console.log('Allmovies',users)
     return (
       <div className={Style.singleMovie}>
       <div className={Style.mainPage}> 
@@ -30,23 +29,23 @@ export default function Aboutmovie({data}) {
     )
   }
 
- export async function getStaticPaths({}) {
+//  export async function getStaticPaths({}) {
    
 
-    const res = await axios.get(`${config.API_ROOT}/list?user=${config.API_KEY}`,{headers})
-    const results = res.data.data.movies
+//     const res = await axios.get(`${config.API_ROOT}/list?user=${config.API_KEY}`,{headers})
+//     const results = res.data.data.movies
   
-    const paths = results.map((user) => ({
+//     const paths = results.map((user) => ({
       
-        params: {id: user.id.toString()},
-    }))
+//         params: {id: user.id.toString()},
+//     }))
     
   
-    return { paths, fallback: false }
-  }
+//     return { paths, fallback: false }
+//   }
 
 
-  export async function getStaticProps({params}) {
+  export async function getServerSideProps ({params}) {
    
     const res = await axios.get(`${config.API_ROOT}/show/${params.id}?user=${config.API_KEY}`,{
       headers,
